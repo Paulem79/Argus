@@ -1,7 +1,9 @@
-package net.paulem.argus.core;
+package net.paulem.argus.core.managers;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.paulem.argus.core.Argus;
+import net.paulem.argus.core.ILogic;
 import net.paulem.argus.utils.Constants;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -80,6 +82,8 @@ public class EngineManager {
                 frames++;
             }
         }
+
+        cleanup();
     }
 
     public void stop() {

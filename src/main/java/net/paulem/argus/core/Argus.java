@@ -1,6 +1,8 @@
 package net.paulem.argus.core;
 
 import lombok.Getter;
+import net.paulem.argus.core.managers.EngineManager;
+import net.paulem.argus.core.managers.WindowManager;
 import net.paulem.argus.test.TestGame;
 import net.paulem.argus.utils.Constants;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package net.paulem.argus.core;
+package net.paulem.argus.core.managers;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,9 +1,9 @@
 package net.paulem.argus.test;
 
-import net.paulem.argus.core.Argus;
-import net.paulem.argus.core.ILogic;
-import net.paulem.argus.core.RenderManager;
-import net.paulem.argus.core.WindowManager;
+import net.paulem.argus.core.*;
+import net.paulem.argus.core.entity.Model;
+import net.paulem.argus.core.managers.RenderManager;
+import net.paulem.argus.core.managers.WindowManager;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -12,16 +12,36 @@ public class TestGame implements ILogic {
     private float color = 0.0f;
 
     private final RenderManager renderer;
+    private final ObjectLoader loader;
     private final WindowManager window;
+
+    private Model model;
 
     public TestGame() {
         this.renderer = new RenderManager();
         this.window = Argus.INSTANCE.getWindow();
+        this.loader = new ObjectLoader();
     }
 
     @Override
     public void init() throws Exception {
         renderer.init();
+
+        float[] vertices = {
+                -0.5f, 0.5f, 0f,
+                -0.5f, -0.5f, 0f,
+                0.5f, -0.5f, 0f,
+                0.5f, -0.5f, 0f,
+                0.5f, 0.5f, 0f,
+                -0.5f, 0.5f, 0f
+        };
+
+        int[] indices = {
+                0, 1, 3,
+                3, 1, 2
+        };
+
+        model = loader.loadModel(vertices, indices);
     }
 
     @Override
@@ -53,11 +73,12 @@ public class TestGame implements ILogic {
         }
 
         window.setClearColor(color, color, color, 0);
-        renderer.clear();
+        renderer.render(model);
     }
 
     @Override
     public void cleanup() {
         renderer.cleanup();
+        loader.cleanup();
     }
 }
