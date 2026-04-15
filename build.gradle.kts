@@ -46,5 +46,5 @@ tasks.test {
 
 // Set the main class for the application plugin
 application {
-    mainClass.set("$group.Main")
+    mainClass.set("net.paulem.entrypoint.EntryPoint")
 }
