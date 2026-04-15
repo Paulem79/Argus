@@ -1,6 +1,7 @@
 package net.paulem.argus.core.managers;
 
 import net.paulem.argus.core.Argus;
+import net.paulem.argus.core.entity.Camera;
 import net.paulem.argus.core.entity.Entity;
 import net.paulem.argus.core.entity.Model;
 import net.paulem.argus.utils.Transformation;
@@ -25,13 +26,18 @@ public class RenderManager {
         shader.link();
         shader.createUniform("textureSampler");
         shader.createUniform("transformationMatrix");
+        shader.createUniform("projectionMatrix");
+        shader.createUniform("viewMatrix");
     }
 
-    public void render(Entity entity) {
+    public void render(Entity entity, Camera camera) {
         clear();
         shader.bind();
         shader.setUniform("textureSampler", 0);
         shader.setUniform("transformationMatrix", Transformation.createTransformationMatrix(entity));
+        shader.setUniform("projectionMatrix", window.updateProjectionMatrix());
+        shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera));
+
         Model model = entity.getModel();
         GL30.glBindVertexArray(model.getId());
         GL20.glEnableVertexAttribArray(0);

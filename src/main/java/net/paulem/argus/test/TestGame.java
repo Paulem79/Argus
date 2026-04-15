@@ -1,6 +1,7 @@
 package net.paulem.argus.test;
 
 import net.paulem.argus.core.*;
+import net.paulem.argus.core.entity.Camera;
 import net.paulem.argus.core.entity.Entity;
 import net.paulem.argus.core.entity.Model;
 import net.paulem.argus.core.entity.Texture;
@@ -11,74 +12,118 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 public class TestGame implements ILogic {
-    private int direction = 0;
-    private float color = 0.0f;
+    private static final float CAMERA_MOVE_SPEED = 0.05f;
 
     private final RenderManager renderer;
     private final ObjectLoader loader;
     private final WindowManager window;
 
     private Entity entity;
+    private Camera camera;
+
+    Vector3f cameraInc;
 
     public TestGame() {
         this.renderer = new RenderManager();
         this.window = Argus.INSTANCE.getWindow();
         this.loader = new ObjectLoader();
+        this.camera = new Camera();
+        this.cameraInc = new Vector3f();
     }
 
     @Override
     public void init() throws Exception {
         renderer.init();
 
-        float aspect = (float) window.getWidth() / window.getHeight();
-        float[] vertices = {
-                -0.5f / aspect,  0.5f, 0f,
-                -0.5f / aspect, -0.5f, 0f,
-                 0.5f / aspect, -0.5f, 0f,
-                 0.5f / aspect,  0.5f, 0f
+        float[] vertices = new float[] {
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                -0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                -0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                -0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+        };
+        float[] textureCoords = new float[]{
+                0.0f, 0.0f,
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+                0.5f, 0.0f,
+                0.0f, 0.0f,
+                0.5f, 0.0f,
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+                0.0f, 1.0f,
+                0.5f, 1.0f,
+                0.0f, 0.0f,
+                0.0f, 0.5f,
+                0.5f, 0.0f,
+                0.5f, 0.5f,
+                0.5f, 0.0f,
+                1.0f, 0.0f,
+                0.5f, 0.5f,
+                1.0f, 0.5f,
+        };
+        int[] indices = new int[]{
+                0, 1, 3, 3, 1, 2,
+                8, 10, 11, 9, 8, 11,
+                12, 13, 7, 5, 12, 7,
+                14, 15, 6, 4, 14, 6,
+                16, 18, 19, 17, 16, 19,
+                4, 6, 7, 5, 4, 7,
         };
 
-        int[] indices = {
-                0, 1, 3,
-                3, 1, 2
-        };
-
-        float[] textureCoords = {
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0
-        };
 
         Model model = loader.loadModel(vertices, textureCoords, indices);
         model.setTexture(new Texture(loader.loadTexture("textures/block.png")));
-        entity = new Entity(model, new Vector3f(1, 0, 0), new Vector3f(0, 0, 0), 1);
+        entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 1);
     }
 
     @Override
     public void input() {
-        if(window.isKeyPressed(GLFW.GLFW_KEY_UP)) {
-            direction = 1;
-        } else if(window.isKeyPressed(GLFW.GLFW_KEY_DOWN)) {
-            direction = -1;
-        } else {
-            direction = 0;
+        cameraInc.set(0, 0, 0);
+
+        if(window.isKeyPressed(GLFW.GLFW_KEY_W)) {
+            cameraInc.z = -1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_S)) {
+            cameraInc.z = 1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_A)) {
+            cameraInc.x = -1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_D)) {
+            cameraInc.x = 1;
+        }
+
+        if(window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
+            cameraInc.y = 1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_X)) {
+            cameraInc.y = -1;
         }
     }
 
     @Override
     public void update() {
-        color += direction * 0.01f;
-        if(color > 1) {
-            color = 1;
-        } else if(color < 0) {
-            color = 0;
-        }
+        camera.movePosition(cameraInc.x * CAMERA_MOVE_SPEED, cameraInc.y * CAMERA_MOVE_SPEED, cameraInc.z * CAMERA_MOVE_SPEED);
 
-        if(entity.getPos().x < -1.5f) {
-            entity.getPos().x = 1.5f;
-        }
-        entity.getPos().x -= 0.01f;
+        entity.addRotation(0.0f, 0.5f, 0.0f);
     }
 
     @Override
@@ -88,8 +133,8 @@ public class TestGame implements ILogic {
             window.setResize(true);
         }
 
-        window.setClearColor(color, color, color, 0);
-        renderer.render(entity);
+        window.setClearColor(0.0f, 0.0f, 0.0f, 0);
+        renderer.render(entity, camera);
     }
 
     @Override
