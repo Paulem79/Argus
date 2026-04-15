@@ -1,16 +1,67 @@
 package net.paulem.argus.core.managers;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryStack;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ShaderManager {
     private final int programID;
     private int vertexShaderID, fragmentShaderID;
+
+    private final Map<String, Integer> uniforms;
 
     public ShaderManager() throws Exception {
         programID = GL20.glCreateProgram();
         if(programID == 0) {
             throw new Exception("Failed to create shader program!");
         }
+
+        uniforms = new HashMap<>();
+    }
+
+    public void createUniform(String uniformName) {
+        int uniformLocation = GL20.glGetUniformLocation(programID, uniformName);
+
+        if(uniformLocation < 0) {
+            throw new RuntimeException("Failed to get uniform location for: " + uniformName);
+        }
+
+        uniforms.put(uniformName, uniformLocation);
+    }
+
+    public void setUniform(String uniformName, Matrix4f value) {
+        try(MemoryStack stack = MemoryStack.stackPush()) {
+            GL20.glUniformMatrix4fv(uniforms.get(uniformName), false, value.get(stack.mallocFloat(16)));
+        }
+    }
+
+    public void setUniform(String uniformName, Vector4f value) {
+        GL20.glUniform4f(uniforms.get(uniformName), value.x, value.y, value.z, value.w);
+    }
+
+    public void setUniform(String uniformName, Vector3f value) {
+        GL20.glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
+    }
+
+    public void setUniform(String uniformName, boolean value) {
+        float res = 0;
+        if(value) {
+            res = 1;
+        }
+        GL20.glUniform1f(uniforms.get(uniformName), res);
+    }
+
+    public void setUniform(String uniformName, int value) {
+        GL20.glUniform1i(uniforms.get(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, float value) {
+        GL20.glUniform1f(uniforms.get(uniformName), value);
     }
 
     public void createVertexShader(String shaderCode) throws Exception {

@@ -36,6 +36,10 @@ dependencies {
     // JOML (Mathématiques 3D)
     implementation("org.joml:joml:1.10.8")
 
+    // STB (Images, Fonts, etc.)
+    implementation("org.lwjgl:lwjgl-stb:$lwjglVersion")
+    runtimeOnly("org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives")
+
     // Lombok
     val lombokVersion = "1.18.44"
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
