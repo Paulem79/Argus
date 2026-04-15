@@ -32,12 +32,14 @@ public class ObjectLoader {
     public int loadTexture(String filename) throws Exception {
         int width, height;
         ByteBuffer buffer;
+        ByteBuffer imageBuffer = Utils.ioResourceToByteBuffer(filename);
+
         try(MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer widthBuffer = stack.mallocInt(1);
             IntBuffer heightBuffer = stack.mallocInt(1);
             IntBuffer channelsBuffer = stack.mallocInt(1);
 
-            buffer = STBImage.stbi_load(filename, widthBuffer, heightBuffer, channelsBuffer, 4);
+            buffer = STBImage.stbi_load_from_memory(imageBuffer, widthBuffer, heightBuffer, channelsBuffer, 4);
             if(buffer == null) {
                 throw new Exception("Failed to load texture at path: " + filename + "\n" + STBImage.stbi_failure_reason());
             }
@@ -58,6 +60,7 @@ public class ObjectLoader {
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
         STBImage.stbi_image_free(buffer);
+        org.lwjgl.system.MemoryUtil.memFree(imageBuffer);
         return id;
     }
 

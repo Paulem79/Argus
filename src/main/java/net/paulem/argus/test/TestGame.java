@@ -7,13 +7,13 @@ import net.paulem.argus.core.entity.Model;
 import net.paulem.argus.core.entity.Texture;
 import net.paulem.argus.core.managers.RenderManager;
 import net.paulem.argus.core.managers.WindowManager;
+import net.paulem.argus.utils.Constants;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 public class TestGame implements ILogic {
-    private static final float CAMERA_MOVE_SPEED = 0.05f;
-
     private final RenderManager renderer;
     private final ObjectLoader loader;
     private final WindowManager window;
@@ -90,7 +90,7 @@ public class TestGame implements ILogic {
 
 
         Model model = loader.loadModel(vertices, textureCoords, indices);
-        model.setTexture(new Texture(loader.loadTexture("textures/block.png")));
+        model.setTexture(new Texture(loader.loadTexture("/textures/block.png")));
         entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 1);
     }
 
@@ -111,19 +111,22 @@ public class TestGame implements ILogic {
             cameraInc.x = 1;
         }
 
-        if(window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
+        if(window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
             cameraInc.y = 1;
         }
-        if(window.isKeyPressed(GLFW.GLFW_KEY_X)) {
+        if(window.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
             cameraInc.y = -1;
         }
     }
 
     @Override
-    public void update() {
-        camera.movePosition(cameraInc.x * CAMERA_MOVE_SPEED, cameraInc.y * CAMERA_MOVE_SPEED, cameraInc.z * CAMERA_MOVE_SPEED);
+    public void update(float interval, MouseInput mouseInput) {
+        camera.movePosition(cameraInc.x * Constants.CAMERA_MOVE_SPEED, cameraInc.y * Constants.CAMERA_MOVE_SPEED, cameraInc.z * Constants.CAMERA_MOVE_SPEED);
 
-        entity.addRotation(0.0f, 0.5f, 0.0f);
+        if(mouseInput.isRightButtonPress()) {
+            Vector2f rotVec = mouseInput.getDisplVec();
+            camera.moveRotation(rotVec.x * Constants.MOUSE_SENSITIVITY, rotVec.y * Constants.MOUSE_SENSITIVITY, 0);
+        }
     }
 
     @Override

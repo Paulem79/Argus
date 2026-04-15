@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.paulem.argus.core.Argus;
 import net.paulem.argus.core.ILogic;
+import net.paulem.argus.core.MouseInput;
 import net.paulem.argus.utils.Constants;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -21,6 +22,7 @@ public class EngineManager {
     private boolean isRunning = false;
 
     private WindowManager window;
+    private MouseInput mouseInput;
     private GLFWErrorCallback errorCallback;
     private ILogic gameLogic;
 
@@ -28,8 +30,10 @@ public class EngineManager {
         GLFW.glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
         window = Argus.INSTANCE.getWindow();
         gameLogic = Argus.INSTANCE.getGame();
+        mouseInput = new MouseInput();
         window.init();
         gameLogic.init();
+        mouseInput.init();
     }
 
     public void start() throws Exception {
@@ -77,7 +81,7 @@ public class EngineManager {
             }
 
             if(render) {
-                update();
+                update(frameTime);
                 render();
                 frames++;
             }
@@ -95,6 +99,7 @@ public class EngineManager {
     }
 
     public void input() {
+        mouseInput.input();
         gameLogic.input();
     }
 
@@ -103,8 +108,8 @@ public class EngineManager {
         window.update();
     }
 
-    public void update() {
-        gameLogic.update();
+    public void update(float interval) {
+        gameLogic.update(interval, mouseInput);
     }
 
     public void cleanup() {
