@@ -33,7 +33,7 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
 
     // JOML (Mathématiques 3D)
-    implementation("org.joml:joml:1.10.5")
+    implementation("org.joml:joml:1.10.8")
 
     testImplementation(platform("org.junit:junit-bom:6.0.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
