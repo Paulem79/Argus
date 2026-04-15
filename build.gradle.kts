@@ -34,7 +34,7 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
 
     // JOML (Mathématiques 3D)
-    implementation("org.joml:joml:1.10.5")
+    implementation("org.joml:joml:1.10.8")
 
     // Lombok
     val lombokVersion = "1.18.44"
