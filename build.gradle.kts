@@ -2,7 +2,8 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id("java")
-    id("application")
+    application
+    id("com.gradleup.shadow") version "9.4.1"
 }
 
 val lwjglVersion = "3.4.1"
@@ -35,16 +36,26 @@ dependencies {
     // JOML (Mathématiques 3D)
     implementation("org.joml:joml:1.10.5")
 
-    testImplementation(platform("org.junit:junit-bom:6.0.3"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
+    // Lombok
+    val lombokVersion = "1.18.44"
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
 
-tasks.test {
-    useJUnitPlatform()
+    // Logger
+    implementation("org.slf4j:slf4j-api:2.0.12")
+    implementation("ch.qos.logback:logback-classic:1.5.3")
 }
 
 // Set the main class for the application plugin
+val entrypoint = "net.paulem.entrypoint.EntryPoint"
+
 application {
-    mainClass.set("net.paulem.entrypoint.EntryPoint")
+    mainClass.set(entrypoint)
+}
+
+// Add to manifest
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = entrypoint
+    }
 }
