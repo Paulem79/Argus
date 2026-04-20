@@ -63,3 +63,10 @@ tasks.jar {
         attributes["Main-Class"] = entrypoint
     }
 }
+
+// Target java 25
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}

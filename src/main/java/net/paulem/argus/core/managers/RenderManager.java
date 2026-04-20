@@ -4,6 +4,10 @@ import net.paulem.argus.core.Argus;
 import net.paulem.argus.core.entity.Camera;
 import net.paulem.argus.core.entity.Entity;
 import net.paulem.argus.core.entity.Model;
+import net.paulem.argus.core.lightning.DirectionalLight;
+import net.paulem.argus.core.lightning.PointLight;
+import net.paulem.argus.core.lightning.SpotLight;
+import net.paulem.argus.utils.Constants;
 import net.paulem.argus.utils.Transformation;
 import net.paulem.argus.utils.Utils;
 import org.lwjgl.opengl.GL11;
@@ -28,22 +32,44 @@ public class RenderManager {
         shader.createUniform("transformationMatrix");
         shader.createUniform("projectionMatrix");
         shader.createUniform("viewMatrix");
+        shader.createUniform("ambientLight");
+        shader.createMaterialUniform("material");
+        shader.createUniform("specularPower");
+        shader.createDirectionalLightUniform("directionalLight");
+        shader.createPointLightListUniform("pointLights", 5);
+        shader.createSpotLightListUniform("spotLights", 5);
     }
 
-    public void render(Entity entity, Camera camera) {
+    public void render(Entity entity, Camera camera, DirectionalLight directionalLight, PointLight[] pointLights, SpotLight[] spotLights) {
         clear();
+
         shader.bind();
         shader.setUniform("textureSampler", 0);
         shader.setUniform("transformationMatrix", Transformation.createTransformationMatrix(entity));
         shader.setUniform("projectionMatrix", window.updateProjectionMatrix());
         shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera));
+        shader.setUniform("material", entity.getModel().getMaterial());
+        shader.setUniform("ambientLight", Constants.AMBIENT_LIGHT);
+        shader.setUniform("specularPower", Constants.SPECULAR_POWER);
+        shader.setUniform("directionalLight", directionalLight);
+
+        int numLights = pointLights != null ? pointLights.length : 0;
+        for(int i = 0; i < numLights; i++) {
+            shader.setUniform("pointLights", pointLights[i], i);
+        }
+
+        numLights = spotLights != null ? spotLights.length : 0;
+        for(int i = 0; i < numLights; i++) {
+            shader.setUniform("spotLights", spotLights[i], i);
+        }
 
         Model model = entity.getModel();
         GL30.glBindVertexArray(model.getId());
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
+        GL20.glEnableVertexAttribArray(2);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getId());
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getMaterial().getTexture().getId());
         GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);

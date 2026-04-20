@@ -12,7 +12,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 public class EngineManager {
 
     public static final long NANOSECOND = 1_000_000_000L;
-    public static final long FRAMERATE = 10000;
+    public static final long FRAMERATE = 1000;
 
     @Getter
     @Setter

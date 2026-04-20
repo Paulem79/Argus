@@ -10,19 +10,32 @@ public class Model {
     private int vertexCount;
     @Getter
     @Setter
-    private Texture texture;
+    private Material material;
 
     public Model(int id, int vertexCount) {
         this(id, vertexCount, null);
     }
 
-    public Model(int id, int vertexCount, Texture texture) {
+    public Model(int id, int vertexCount, Material material) {
         this.id = id;
         this.vertexCount = vertexCount;
-        this.texture = texture;
+        this.material = material;
     }
 
     public Model(Model model, Texture texture) {
-        this(model.getId(), model.getVertexCount(), texture);
+        Material material = model.getMaterial();
+        this(model.getId(), model.getVertexCount(), material != null ? material : new Material(texture));
+
+        if(material != null) {
+            this.material.setTexture(texture);
+        }
+    }
+
+    public void setTexture(Texture texture, float reflectance) {
+        if(this.material == null) {
+            this.material = new Material();
+        }
+        this.material.setTexture(texture);
+        this.material.setReflectance(reflectance);
     }
 }
