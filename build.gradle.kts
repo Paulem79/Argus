@@ -41,7 +41,7 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives")
 
     // Lombok
-    val lombokVersion = "1.18.44"
+    val lombokVersion = "1.18.46"
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     compileOnly("org.projectlombok:lombok:$lombokVersion")
 
