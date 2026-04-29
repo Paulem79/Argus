@@ -12,12 +12,20 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 public class EngineManager {
 
     public static final long NANOSECOND = 1_000_000_000L;
-    public static final long FRAMERATE = 1000;
+    public static final long FRAMERATE = 10000;
 
     @Getter
     @Setter
     private static int fps;
     private static float frameTime = 1.0f / FRAMERATE;
+
+    @Getter
+    @Setter
+    private static int renderedTriangles;
+
+    @Getter
+    @Setter
+    private static int renderedVertices;
 
     private boolean isRunning = false;
 
@@ -74,7 +82,7 @@ public class EngineManager {
 
                 if(frameCounter >= NANOSECOND) {
                     setFps(frames);
-                    window.setTitle(Constants.TITLE + " - " + getFps() + " FPS");
+                    window.setTitle(Constants.TITLE + " - " + getFps() + " FPS - Triangles: " + getRenderedTriangles() + " - Vertices: " + getRenderedVertices());
                     frames = 0;
                     frameCounter = 0;
                 }

@@ -25,7 +25,7 @@ public class WindowManager {
 
     @Getter
     @Setter
-    private boolean resize, vSync;
+    private boolean resized, vSync;
 
     @Getter
     private final Matrix4f projectionMatrix;
@@ -75,7 +75,7 @@ public class WindowManager {
         GLFW.glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
             this.width = width;
             this.height = height;
-            this.setResize(true);
+            this.setResized(true);
         });
 
         GLFW.glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {

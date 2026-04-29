@@ -8,7 +8,7 @@ import net.paulem.argus.core.entity.Texture;
 import net.paulem.argus.core.lightning.DirectionalLight;
 import net.paulem.argus.core.lightning.PointLight;
 import net.paulem.argus.core.lightning.SpotLight;
-import net.paulem.argus.core.managers.RenderManager;
+import net.paulem.argus.core.rendering.RenderManager;
 import net.paulem.argus.core.managers.WindowManager;
 import net.paulem.argus.utils.Constants;
 import org.joml.Vector2f;
@@ -16,12 +16,16 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class TestGame implements ILogic {
     private final RenderManager renderer;
     private final ObjectLoader loader;
     private final WindowManager window;
 
-    private Entity entity;
+    private List<Entity> entities;
     private Camera camera;
     private DirectionalLight directionalLight;
     private PointLight[] pointLights;
@@ -44,6 +48,19 @@ public class TestGame implements ILogic {
     public void init() throws Exception {
         renderer.init();
 
+        Model model = loader.loadOBJModel("/models/cow.obj"); //loader.loadModel(vertices, textureCoords, indices);
+        model.setTexture(new Texture(loader.loadTexture("/textures/cow.jpg")), 1f);
+
+        entities = new ArrayList<>();
+        Random rand = new Random();
+        for(int i = 0; i < 100; i++) {
+            float x = rand.nextFloat() * 100 - 50;
+            float y = rand.nextFloat() * 100 - 50;
+            float z = rand.nextFloat() * -300;
+            entities.add(new Entity(model, new Vector3f(x, y, z), new Vector3f(rand.nextFloat() * 180, rand.nextFloat() * 180, 0), 5));
+        }
+        entities.add(new Entity(model, new Vector3f(0, 0, -2f), new Vector3f(0, 0, 0), 5));
+
         float lightIntensity = 1.0f;
         // Point light
         Vector3f pointLightPosition = new Vector3f(0, 0, -3.2f);
@@ -64,10 +81,6 @@ public class TestGame implements ILogic {
 
         pointLights = new PointLight[] { pointLight };
         spotLights = new SpotLight[] { spotLight, spotLight1 };
-
-        Model model = loader.loadOBJModel("/models/IronMan.obj"); //loader.loadModel(vertices, textureCoords, indices);
-        model.setTexture(new Texture(loader.loadTexture("/textures/cow.jpg")), 1f);
-        entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 1);
     }
 
     @Override
@@ -139,16 +152,20 @@ public class TestGame implements ILogic {
         double angRad = Math.toRadians(lightAngle);
         directionalLight.getDirection().x = (float) Math.sin(angRad);
         directionalLight.getDirection().y = (float) Math.cos(angRad);*/
+
+        for (Entity entity : entities) {
+            renderer.processEntity(entity);
+        }
     }
 
     @Override
     public void render() {
-        if(window.isResize()) {
+        if(window.isResized()) {
             GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
-            window.setResize(true);
+            window.setResized(true);
         }
 
-        renderer.render(entity, camera, directionalLight, pointLights, spotLights);
+        renderer.render(camera, directionalLight, pointLights, spotLights);
     }
 
     @Override

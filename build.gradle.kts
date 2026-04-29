@@ -70,3 +70,15 @@ java {
         languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
+
+tasks.register<JavaExec>("runNvidia") {
+    group = "application"
+    description = "Run the application with NVIDIA PRIME render offload and MangoHud"
+    mainClass.set(application.mainClass)
+    classpath = sourceSets["main"].runtimeClasspath
+
+    // Set environment variables for NVIDIA PRIME and MangoHud
+    environment("MANGOHUD", "1")
+    environment("__NV_PRIME_RENDER_OFFLOAD", "1")
+    environment("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+}

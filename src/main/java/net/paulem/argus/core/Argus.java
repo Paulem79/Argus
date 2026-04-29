@@ -21,7 +21,7 @@ public class Argus {
     public void run() {
         getLogger().info("Hello from Argus!");
 
-        window = new WindowManager(Constants.TITLE, 1280, 720, true);
+        window = new WindowManager(Constants.TITLE, 1280, 720, false);
         game = new TestGame();
         EngineManager engine = new EngineManager();
 
