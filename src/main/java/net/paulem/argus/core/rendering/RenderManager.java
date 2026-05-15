@@ -3,6 +3,7 @@ package net.paulem.argus.core.rendering;
 import net.paulem.argus.core.entity.Camera;
 import net.paulem.argus.core.entity.Entity;
 import net.paulem.argus.core.entity.Model;
+import net.paulem.argus.core.entity.SceneManager;
 import net.paulem.argus.core.entity.terrain.Terrain;
 import net.paulem.argus.core.lightning.DirectionalLight;
 import net.paulem.argus.core.lightning.PointLight;
@@ -46,7 +47,11 @@ public class RenderManager {
         shader.setUniform("directionalLight", directionalLight);
     }
 
-    public void render(Camera camera, DirectionalLight directionalLight, PointLight[] pointLights, SpotLight[] spotLights) {
+    public void render(Camera camera, SceneManager sceneManager) {
+        render(camera, sceneManager.getDirectionalLight(), sceneManager.getPointLights(), sceneManager.getSpotLights());
+    }
+
+    private void render(Camera camera, DirectionalLight directionalLight, PointLight[] pointLights, SpotLight[] spotLights) {
         clear();
 
         entityRenderer.render(camera, pointLights, spotLights, directionalLight);

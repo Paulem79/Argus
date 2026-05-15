@@ -23,17 +23,11 @@ public class TestGame implements ILogic {
     private final ObjectLoader loader;
     private final WindowManager window;
 
-    private List<Entity> entities;
-    private List<Terrain> terrains;
-
     private Camera camera;
-    private DirectionalLight directionalLight;
-    private PointLight[] pointLights;
-    private SpotLight[] spotLights;
+
+    private SceneManager sceneManager;
 
     Vector3f cameraInc;
-
-    private float lightAngle;
 
     public TestGame() {
         this.renderer = new RenderManager();
@@ -41,7 +35,7 @@ public class TestGame implements ILogic {
         this.loader = new ObjectLoader();
         this.camera = new Camera();
         this.cameraInc = new Vector3f();
-        this.lightAngle = -90;
+        sceneManager = new SceneManager(-90f);
     }
 
     @Override
@@ -51,20 +45,18 @@ public class TestGame implements ILogic {
         Model model = loader.loadOBJModel("/models/cow.obj"); //loader.loadModel(vertices, textureCoords, indices);
         model.setTexture(new Texture(loader.loadTexture("/textures/cow.jpg")), 1f);
 
-        terrains = new ArrayList<>();
-        Terrain terrain = new Terrain(new Vector3f(0, -1, -800), loader, new Material(new Texture(loader.loadTexture("/textures/block.png")), 0.1f));
-        Terrain terrain2 = new Terrain(new Vector3f(-800, -1, -800), loader, new Material(new Texture(loader.loadTexture("/textures/cow.jpg")), 0.1f));
-        terrains.add(terrain); terrains.add(terrain2);
+        Terrain terrain = new Terrain(new Vector3f(0, 1, -800), loader, new Material(new Texture(loader.loadTexture("/textures/block.png")), 0.1f));
+        Terrain terrain2 = new Terrain(new Vector3f(-800, 1, -800), loader, new Material(new Texture(loader.loadTexture("/textures/cow.jpg")), 0.1f));
+        sceneManager.addTerrain(terrain); sceneManager.addTerrain(terrain2);
 
-        entities = new ArrayList<>();
         Random rand = new Random();
-        for(int i = 0; i < 100; i++) {
+        for(int i = 0; i < 10; i++) {
             float x = rand.nextFloat() * 100 - 50;
             float y = rand.nextFloat() * 100 - 50;
             float z = rand.nextFloat() * -300;
-            entities.add(new Entity(model, new Vector3f(x, y, z), new Vector3f(rand.nextFloat() * 180, rand.nextFloat() * 180, 0), 5));
+            sceneManager.addEntity(new Entity(model, new Vector3f(x, y, z), new Vector3f(rand.nextFloat() * 180, rand.nextFloat() * 180, 0), 5));
         }
-        entities.add(new Entity(model, new Vector3f(0, 0, -2f), new Vector3f(0, 0, 0), 5));
+        sceneManager.addEntity(new Entity(model, new Vector3f(0, 0, -2f), new Vector3f(0, 0, 0), 5));
 
         float lightIntensity = 1.0f;
         // Point light
@@ -82,10 +74,14 @@ public class TestGame implements ILogic {
         // Directional light
         Vector3f lightPosition = new Vector3f(1, -10, 0);
         Vector3f lightColor = new Vector3f(1, 1, 1);
-        directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
+        DirectionalLight directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
+        sceneManager.setDirectionalLight(directionalLight);
 
-        pointLights = new PointLight[] { pointLight };
-        spotLights = new SpotLight[] { spotLight, spotLight1 };
+        PointLight[] pointLights = new PointLight[] { pointLight };
+        sceneManager.setPointLights(pointLights);
+
+        SpotLight[] spotLights = new SpotLight[] { spotLight, spotLight1 };
+        sceneManager.setSpotLights(spotLights);
     }
 
     @Override
@@ -113,19 +109,19 @@ public class TestGame implements ILogic {
         }
 
         if(window.isKeyPressed(GLFW.GLFW_KEY_O)) {
-            pointLights[0].getPosition().x += 0.1f;
+            sceneManager.getPointLights()[0].getPosition().x += 0.1f;
         }
 
         if(window.isKeyPressed(GLFW.GLFW_KEY_P)) {
-            pointLights[0].getPosition().x -= 0.1f;
+            sceneManager.getPointLights()[0].getPosition().x -= 0.1f;
         }
 
-        float lightPos = spotLights[0].getPointLight().getPosition().x;
+        float lightPos = sceneManager.getSpotLights()[0].getPointLight().getPosition().x;
         if(window.isKeyPressed(GLFW.GLFW_KEY_N)) {
-            spotLights[0].getPointLight().getColor().z = lightPos + 0.1f;
+            sceneManager.getSpotLights()[0].getPointLight().getColor().z = lightPos + 0.1f;
         }
         if(window.isKeyPressed(GLFW.GLFW_KEY_M)) {
-            spotLights[0].getPointLight().getColor().z = lightPos - 0.1f;
+            sceneManager.getSpotLights()[0].getPointLight().getColor().z = lightPos - 0.1f;
         }
     }
 
@@ -158,11 +154,11 @@ public class TestGame implements ILogic {
         directionalLight.getDirection().x = (float) Math.sin(angRad);
         directionalLight.getDirection().y = (float) Math.cos(angRad);*/
 
-        for (Entity entity : entities) {
+        for (Entity entity : sceneManager.getEntities()) {
             renderer.processEntity(entity);
         }
 
-        for (Terrain terrain : terrains) {
+        for (Terrain terrain : sceneManager.getTerrains()) {
             renderer.processTerrain(terrain);
         }
     }
@@ -174,7 +170,7 @@ public class TestGame implements ILogic {
             window.setResized(true);
         }
 
-        renderer.render(camera, directionalLight, pointLights, spotLights);
+        renderer.render(camera, sceneManager);
     }
 
     @Override
