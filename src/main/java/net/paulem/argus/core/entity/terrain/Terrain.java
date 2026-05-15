@@ -19,11 +19,17 @@ public class Terrain {
     @Getter
     @Setter
     private Model model;
+    @Getter
+    private final TerrainTexture blendMap;
+    @Getter
+    private final BlendMapTerrain blendMapTerrain;
 
-    public Terrain(Vector3f position, ObjectLoader loader, Material material) {
+    public Terrain(Vector3f position, ObjectLoader loader, Material material, TerrainTexture blendMap, BlendMapTerrain blendMapTerrain) {
         this.position = position;
         this.model = generateTerrain(loader);
         this.model.setMaterial(material);
+        this.blendMap = blendMap;
+        this.blendMapTerrain = blendMapTerrain;
     }
 
     private Model generateTerrain(ObjectLoader loader) {

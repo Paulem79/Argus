@@ -2,7 +2,9 @@ package net.paulem.argus.test;
 
 import net.paulem.argus.core.*;
 import net.paulem.argus.core.entity.*;
+import net.paulem.argus.core.entity.terrain.BlendMapTerrain;
 import net.paulem.argus.core.entity.terrain.Terrain;
+import net.paulem.argus.core.entity.terrain.TerrainTexture;
 import net.paulem.argus.core.lightning.DirectionalLight;
 import net.paulem.argus.core.lightning.PointLight;
 import net.paulem.argus.core.lightning.SpotLight;
@@ -11,6 +13,7 @@ import net.paulem.argus.core.managers.WindowManager;
 import net.paulem.argus.utils.Constants;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -45,8 +48,16 @@ public class TestGame implements ILogic {
         Model model = loader.loadOBJModel("/models/cow.obj"); //loader.loadModel(vertices, textureCoords, indices);
         model.setTexture(new Texture(loader.loadTexture("/textures/cow.jpg")), 1f);
 
-        Terrain terrain = new Terrain(new Vector3f(0, 1, -800), loader, new Material(new Texture(loader.loadTexture("/textures/block.png")), 0.1f));
-        Terrain terrain2 = new Terrain(new Vector3f(-800, 1, -800), loader, new Material(new Texture(loader.loadTexture("/textures/cow.jpg")), 0.1f));
+        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("/textures/terrain.png"));
+        TerrainTexture redTexture = new TerrainTexture(loader.loadTexture("/textures/flowers.png"));
+        TerrainTexture greenTexture = new TerrainTexture(loader.loadTexture("/textures/stone.png"));
+        TerrainTexture blueTexture = new TerrainTexture(loader.loadTexture("/textures/dirt.png"));
+        TerrainTexture blendTexture = new TerrainTexture(loader.loadTexture("/textures/blendMap.png"));
+
+        BlendMapTerrain blendMapTerrain = new BlendMapTerrain(backgroundTexture, redTexture, greenTexture, blueTexture);
+
+        Terrain terrain = new Terrain(new Vector3f(0, 1, -800), loader, new Material(new Vector4f(0, 0, 0, 0), 0.1f), blendTexture, blendMapTerrain);
+        Terrain terrain2 = new Terrain(new Vector3f(-800, 1, -800), loader, new Material(new Vector4f(0, 0, 0, 0), 0.1f), blendTexture, blendMapTerrain);
         sceneManager.addTerrain(terrain); sceneManager.addTerrain(terrain2);
 
         Random rand = new Random();
