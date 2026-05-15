@@ -1,10 +1,8 @@
 package net.paulem.argus.test;
 
 import net.paulem.argus.core.*;
-import net.paulem.argus.core.entity.Camera;
-import net.paulem.argus.core.entity.Entity;
-import net.paulem.argus.core.entity.Model;
-import net.paulem.argus.core.entity.Texture;
+import net.paulem.argus.core.entity.*;
+import net.paulem.argus.core.entity.terrain.Terrain;
 import net.paulem.argus.core.lightning.DirectionalLight;
 import net.paulem.argus.core.lightning.PointLight;
 import net.paulem.argus.core.lightning.SpotLight;
@@ -26,6 +24,8 @@ public class TestGame implements ILogic {
     private final WindowManager window;
 
     private List<Entity> entities;
+    private List<Terrain> terrains;
+
     private Camera camera;
     private DirectionalLight directionalLight;
     private PointLight[] pointLights;
@@ -50,6 +50,11 @@ public class TestGame implements ILogic {
 
         Model model = loader.loadOBJModel("/models/cow.obj"); //loader.loadModel(vertices, textureCoords, indices);
         model.setTexture(new Texture(loader.loadTexture("/textures/cow.jpg")), 1f);
+
+        terrains = new ArrayList<>();
+        Terrain terrain = new Terrain(new Vector3f(0, -1, -800), loader, new Material(new Texture(loader.loadTexture("/textures/block.png")), 0.1f));
+        Terrain terrain2 = new Terrain(new Vector3f(-800, -1, -800), loader, new Material(new Texture(loader.loadTexture("/textures/cow.jpg")), 0.1f));
+        terrains.add(terrain); terrains.add(terrain2);
 
         entities = new ArrayList<>();
         Random rand = new Random();
@@ -155,6 +160,10 @@ public class TestGame implements ILogic {
 
         for (Entity entity : entities) {
             renderer.processEntity(entity);
+        }
+
+        for (Terrain terrain : terrains) {
+            renderer.processTerrain(terrain);
         }
     }
 

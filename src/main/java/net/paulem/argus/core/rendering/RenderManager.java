@@ -3,6 +3,7 @@ package net.paulem.argus.core.rendering;
 import net.paulem.argus.core.entity.Camera;
 import net.paulem.argus.core.entity.Entity;
 import net.paulem.argus.core.entity.Model;
+import net.paulem.argus.core.entity.terrain.Terrain;
 import net.paulem.argus.core.lightning.DirectionalLight;
 import net.paulem.argus.core.lightning.PointLight;
 import net.paulem.argus.core.lightning.SpotLight;
@@ -15,14 +16,17 @@ import java.util.List;
 
 public class RenderManager {
     private EntityRenderer entityRenderer;
+    private TerrainRenderer terrainRenderer;
 
     public RenderManager() {
     }
 
     public void init() throws Exception {
         entityRenderer = new EntityRenderer();
+        terrainRenderer = new TerrainRenderer();
 
         entityRenderer.init();
+        terrainRenderer.init();
     }
 
     public static void renderLights(ShaderManager shader, DirectionalLight directionalLight, PointLight[] pointLights, SpotLight[] spotLights) {
@@ -46,6 +50,7 @@ public class RenderManager {
         clear();
 
         entityRenderer.render(camera, pointLights, spotLights, directionalLight);
+        terrainRenderer.render(camera, pointLights, spotLights, directionalLight);
     }
 
     public void processEntity(Entity entity) {
@@ -60,11 +65,16 @@ public class RenderManager {
         }
     }
 
+    public void processTerrain(Terrain terrain) {
+        terrainRenderer.getTerrains().add(terrain);
+    }
+
     public void clear() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 
     public void cleanup() {
         entityRenderer.cleanup();
+        terrainRenderer.cleanup();
     }
 }

@@ -23,6 +23,10 @@ public class Material {
         this(Constants.DEFAULT_COLOR, 0, texture);
     }
 
+    public Material(Texture texture, float reflectance) {
+        this(Constants.DEFAULT_COLOR, reflectance, texture);
+    }
+
     public Material(Vector4f color, float reflectance) {
         this(color, reflectance, null);
     }

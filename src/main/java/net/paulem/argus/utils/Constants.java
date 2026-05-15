@@ -13,4 +13,7 @@ public class Constants {
 
     public static final float SPECULAR_POWER = 10f;
     public static final Vector3f AMBIENT_LIGHT = new Vector3f(0.3f);
+
+    public static final int MAX_SPOT_LIGHTS = 5;
+    public static final int MAX_POINT_LIGHTS = 5;
 }
