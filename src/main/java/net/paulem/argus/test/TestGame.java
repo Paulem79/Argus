@@ -48,16 +48,16 @@ public class TestGame implements ILogic {
         Model model = loader.loadOBJModel("/models/cow.obj"); //loader.loadModel(vertices, textureCoords, indices);
         model.setTexture(new Texture(loader.loadTexture("/textures/cow.jpg")), 1f);
 
-        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("/textures/terrain.png"));
-        TerrainTexture redTexture = new TerrainTexture(loader.loadTexture("/textures/flowers.png"));
-        TerrainTexture greenTexture = new TerrainTexture(loader.loadTexture("/textures/stone.png"));
-        TerrainTexture blueTexture = new TerrainTexture(loader.loadTexture("/textures/dirt.png"));
-        TerrainTexture blendTexture = new TerrainTexture(loader.loadTexture("/textures/blendMap.png"));
+        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("/textures/block.png"));
+        TerrainTexture redTexture = new TerrainTexture(loader.loadTexture("/textures/cow.jpg"));
+        TerrainTexture greenTexture = new TerrainTexture(loader.loadTexture("/textures/block.png"));
+        TerrainTexture blueTexture = new TerrainTexture(loader.loadTexture("/textures/cow.jpg"));
+        TerrainTexture blendTexture = new TerrainTexture(loader.loadTexture("/textures/block.png"));
 
         BlendMapTerrain blendMapTerrain = new BlendMapTerrain(backgroundTexture, redTexture, greenTexture, blueTexture);
 
-        Terrain terrain = new Terrain(new Vector3f(0, 1, -800), loader, new Material(new Vector4f(0, 0, 0, 0), 0.1f), blendTexture, blendMapTerrain);
-        Terrain terrain2 = new Terrain(new Vector3f(-800, 1, -800), loader, new Material(new Vector4f(0, 0, 0, 0), 0.1f), blendTexture, blendMapTerrain);
+        Terrain terrain = new Terrain(new Vector3f(0, 1, -800), loader, new Material(new Vector4f(0, 0, 0, 0), 0.1f), blendTexture, blendMapTerrain, 800);
+        Terrain terrain2 = new Terrain(new Vector3f(-800, 1, -800), loader, new Material(new Vector4f(0, 0, 0, 0), 0.1f), blendTexture, blendMapTerrain, 800);
         sceneManager.addTerrain(terrain); sceneManager.addTerrain(terrain2);
 
         Random rand = new Random();

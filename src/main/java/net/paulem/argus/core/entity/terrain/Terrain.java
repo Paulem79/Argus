@@ -9,8 +9,6 @@ import net.paulem.argus.core.entity.Texture;
 import org.joml.Vector3f;
 
 public class Terrain {
-
-    private static final float SIZE = 800;
     private static final int VERTEX_COUNT = 128;
 
     @Getter
@@ -23,13 +21,16 @@ public class Terrain {
     private final TerrainTexture blendMap;
     @Getter
     private final BlendMapTerrain blendMapTerrain;
+    @Getter
+    private final float size;
 
-    public Terrain(Vector3f position, ObjectLoader loader, Material material, TerrainTexture blendMap, BlendMapTerrain blendMapTerrain) {
+    public Terrain(Vector3f position, ObjectLoader loader, Material material, TerrainTexture blendMap, BlendMapTerrain blendMapTerrain, float size) {
         this.position = position;
         this.model = generateTerrain(loader);
         this.model.setMaterial(material);
         this.blendMap = blendMap;
         this.blendMapTerrain = blendMapTerrain;
+        this.size = size;
     }
 
     private Model generateTerrain(ObjectLoader loader) {
@@ -42,9 +43,9 @@ public class Terrain {
 
         for (int i = 0; i < VERTEX_COUNT; i++) {
             for (int j = 0; j < VERTEX_COUNT; j++) {
-                vertices[vertexPointer * 3] = j / (VERTEX_COUNT - 1.0f) * SIZE;
+                vertices[vertexPointer * 3] = j / (VERTEX_COUNT - 1.0f) * getSize();
                 vertices[vertexPointer * 3 + 1] = 0; // height map
-                vertices[vertexPointer * 3 + 2] = i / (VERTEX_COUNT - 1.0f) * SIZE;
+                vertices[vertexPointer * 3 + 2] = i / (VERTEX_COUNT - 1.0f) * getSize();
                 normals[vertexPointer * 3] = 0;
                 normals[vertexPointer * 3 + 1] = 1;
                 normals[vertexPointer * 3 + 2] = 0;

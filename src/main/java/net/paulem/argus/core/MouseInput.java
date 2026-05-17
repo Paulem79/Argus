@@ -40,18 +40,30 @@ public class MouseInput {
     public void input() {
         displVec.set(0, 0);
 
-        if(previousPos.x > 0 && previousPos.y > 0 && inWindow) {
-            double x = currentPos.x - previousPos.x;
-            double y = currentPos.y - previousPos.y;
-            boolean rotateX = x != 0;
-            boolean rotateY = y != 0;
+        long windowHandle = Argus.INSTANCE.getWindow().getWindow();
+        int width = Argus.INSTANCE.getWindow().getWidth();
+        int height = Argus.INSTANCE.getWindow().getHeight();
 
-            if(rotateX) {
+        // Center of window
+        double centerX = width / 2.0;
+        double centerY = height / 2.0;
+
+        if (inWindow) {
+            double x = currentPos.x - centerX;
+            double y = currentPos.y - centerY;
+
+            if (x != 0) {
                 displVec.y = (float) x;
             }
-            if(rotateY) {
+            if (y != 0) {
                 displVec.x = (float) y;
             }
+
+            // Center mouse
+            GLFW.glfwSetCursorPos(windowHandle, centerX, centerY);
+
+            // Tell current pos in center
+            currentPos.set(centerX, centerY);
         }
 
         previousPos.set(currentPos);

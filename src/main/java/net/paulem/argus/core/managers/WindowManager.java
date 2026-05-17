@@ -98,6 +98,7 @@ public class WindowManager {
         GLFW.glfwSwapInterval(isVSync() ? 1 : 0);
 
         GLFW.glfwShowWindow(window);
+        GLFW.glfwFocusWindow(window);
 
         GL.createCapabilities();
 
