@@ -34,7 +34,7 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
 
     // JOML (Mathématiques 3D)
-    implementation("org.joml:joml:1.10.8")
+    implementation("org.joml:joml:1.10.9")
 
     // STB (Images, Fonts, etc.)
     implementation("org.lwjgl:lwjgl-stb:$lwjglVersion")
