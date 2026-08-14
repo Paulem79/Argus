@@ -47,7 +47,7 @@ dependencies {
 
     // Logger
     implementation("org.slf4j:slf4j-api:2.0.18")
-    implementation("ch.qos.logback:logback-classic:1.5.32")
+    implementation("ch.qos.logback:logback-classic:1.6.3")
 }
 
 // Set the main class for the application plugin
