@@ -6,7 +6,7 @@ plugins {
     id("com.gradleup.shadow") version "9.4.1"
 }
 
-val lwjglVersion = "3.4.1"
+val lwjglVersion = "3.4.3"
 val lwjglNatives = when (OperatingSystem.current()) {
     OperatingSystem.LINUX   -> "natives-linux"
     OperatingSystem.MAC_OS  -> "natives-macos"
